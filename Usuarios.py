@@ -29,7 +29,7 @@ class Usuario:
         return self._estado
 
     # Metodo para prestar material
-    def prestamo(self, materiales):
+    def prestamo(self, materiales, fechas):
         # Mostramos los materiales disponibles que puede prestar
         if self._estado == True:
             if self._tipo_usuario == "Estudiante":
@@ -129,9 +129,23 @@ class Usuario:
                         "Escriba correctamente el indice del material que desea prestar.")
                     return None
         else:
-            print(
-                f"El {self._tipo_usuario} no está habilitado para hacer prestamos.")
+            if self.comprobarFechaSancion(fechas) == True:
+                print(
+                    "Su sanción ha sido levantada, vuelva a intentar realizar el prestamo.")
+            else:
+                print(
+                    f"El {self._tipo_usuario} no está habilitado para hacer prestamos.")
             return None
+
+    # Metodo para comprobar si ya pasaron 10 dias necesarios para levantar la sancion(Solo funcionando para fechas del mismo mes)
+    def comprobarFechaSancion(self, fechas):
+        fechaActual = int((fechas[len(fechas)-1].split("/"))[0])
+        fechaInicial = int((fechas[0].split("/"))[0])
+        if (fechaActual - fechaInicial) >= 10:
+            self._estado = True
+            return True
+        else:
+            return False
 
     # Metodo para hacer la devolucion del prestamo
 
@@ -197,8 +211,8 @@ class Estudiante(Usuario):
 
     # Metodo para prestar material
 
-    def prestamo(self, materiales):
-        material = super().prestamo(materiales)
+    def prestamo(self, materiales, fechas):
+        material = super().prestamo(materiales, fechas)
         if material != None:
             if isinstance(material, Libro):
                 # Modificamos la variable tipo material
@@ -233,8 +247,8 @@ class Egresado(Usuario):
         self._tipo_usuario = "Egresado"
 
     # Metodo para prestar material
-    def prestamo(self, materiales):
-        material = super().prestamo(materiales)
+    def prestamo(self, materiales, fechas):
+        material = super().prestamo(materiales, fechas)
         if material != None:
             if isinstance(material, Libro):
                 # Modificamos la variable tipo material
@@ -274,8 +288,8 @@ class Profesor(Usuario):
         self._tipo_usuario = "Profesor"
 
     # Metodo para prestar material
-    def prestamo(self, materiales):
-        material = super().prestamo(materiales)
+    def prestamo(self, materiales, fechas):
+        material = super().prestamo(materiales, fechas)
         if material != None:
             if isinstance(material, Libro):
                 # Modificamos la variable tipo material
@@ -302,8 +316,16 @@ class Profesor(Usuario):
     def __str__(self):
         return f"{super().__str__()} - {self.__facultad} - {self.__tipo_contrato} - {self.__departamento}"
 
-    # Metodo levantar sancion
-    def levantarSancion(self):
+    # Metodo levantar sancion solo funcionando para fechas del mismo mes
+    def levantarSancion(self, fechas):
+        if len(fechas) == 1:
+            totalAPagar = 200
+        else:
+            fechaActual = int((fechas[len(fechas)-1].split("/"))[0])
+            fechaInicial = int((fechas[0].split("/"))[0])
+            totalAPagar = 200 * (fechaActual-fechaInicial)
+
+        print(f"A su pago se le descontara un total de {totalAPagar}")
         self._estado = True
 
 # Definicion clase Administrativo
@@ -317,8 +339,8 @@ class Administrativo(Usuario):
         self._tipo_usuario = "Administrativo"
 
     # Metodo para prestar material
-    def prestamo(self, materiales):
-        material = super().prestamo(materiales)
+    def prestamo(self, materiales, fechas):
+        material = super().prestamo(materiales, fechas)
         if material != None:
             if isinstance(material, Libro):
                 # Modificamos la variable tipo material
