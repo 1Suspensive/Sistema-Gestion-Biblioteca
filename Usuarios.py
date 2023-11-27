@@ -157,8 +157,7 @@ class Usuario:
             i = 0
             print("Materiales Prestados:")
             for material_prestado in self._material_prestado:
-                print(f"{i+1}.", end="")
-                print(material_prestado)
+                print(f"{i+1}. {material_prestado}")
                 i += 1
             try:
                 devolucion = int(
@@ -181,6 +180,7 @@ class Usuario:
                 self._tipo_material[2] -= 1
             # Removemos de la lista de materiales prestados el material
             self._material_prestado.pop(devolucion)
+            print("El material fue devuelto correctamente.")
 
     # Metodo para aplicar sancion
 
@@ -192,7 +192,7 @@ class Usuario:
         # Añadimos los materiales prestados
         materiales = "Materiales prestados:"
         if len(self._material_prestado) == 0:
-            materiales += " Ninguno"
+            materiales +=  " Ninguno"
         else:
             materiales += ", ".join(str(material)
                                     for material in self._material_prestado)
@@ -270,10 +270,7 @@ class Egresado(Usuario):
             return True
         else:
             return False
-    # Metodo __str__
-
-    def __str__(self):
-        return super().__str__()
+    
 
 # Definicion subclase Profesor
 
